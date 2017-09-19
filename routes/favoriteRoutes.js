@@ -8,21 +8,26 @@ var config = require("../config");
 favoriteRouter.route("/param/:which/:streamId")
     .put(function(req, res){
         console.log(req.user)
-        User.find({_id: req.user._id}, function (err, user) {
+        User.findOne({_id: req.user._id}, function (err, user) {
           if (err) console.log("err" + err);
-          console.log("favoriteStreams" + user);
+          console.log("favoriteStreams: " + user.favoriteStreams);
           console.log("++++++++")
             user.favoriteStreams.forEach(function(stream){
-                console.log("Success, stream" + stream);
-                if (stream._id === req.param.streamId){
-                    stream[req.param.which] === req.body.param;
+                console.log("Success, stream" + stream.stream);
+                console.log("Success, stream" + req.params.streamId);
+                if (stream.stream == req.params.streamId){
+
+                    stream[req.params.which] = req.body.param;
+
                     user.save(function (err, savedUser) {
                         if (err) res.status(500).send(err);
+                        console.log("Successfull matched stream id's")
+
                         res.status(201).send(savedUser);
                     });
                 }
             })
-            res.send("Stream is not favorited by user")
+            // res.send("Stream is not favorited by user")
         });
     })
 
