@@ -2,13 +2,18 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var streamSchema = new Schema({
-    title: {
+    apiTitle: {
         type: String,
         required: true
     },
-    description: {
-        type: Boolean,
-        default: false
+    knownTitle: {
+        type: String,
+        default: this.apiTitle
+    },
+    apiId: {
+        type: Number,
+        unique: true,
+        required: true
     }
 });
 

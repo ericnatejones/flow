@@ -3,4 +3,4 @@
 *.orig
 node_modules/
 bower_components/
-config.js  
+config.js
