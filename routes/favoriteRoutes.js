@@ -49,7 +49,22 @@ favoriteRouter.route("/:streamId")
         });
 
     })
+favoriteRouter.route("/")
+    .get(function(req, res){
+        // console.log(req.user.favoriteStreams)
+        // var favoriteStreams = req.user.filter((stream)=>stream._id === 1)
+        User.findOne({_id: req.user._id})
+            .populate("favoriteStreams")
+            .exec((err, user)=>{
+                if (err) return handleError(err);
+                Stream.populate(user.favoriteStreams, {
+                    path: 'stream',
+                    model: 'Stream'
+                }, function(err){
+                    console.log(user.favoriteStreams[0]);
+                })
+            })
 
-
+    })
 
 module.exports = favoriteRouter;
