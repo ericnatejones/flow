@@ -61,7 +61,7 @@ favoriteRouter.route("/")
                     path: 'stream',
                     model: 'Stream'
                 }, function(err){
-                    console.log(user.favoriteStreams[0]);
+                    res.send(user.favoriteStreams);
                 })
             })
 
