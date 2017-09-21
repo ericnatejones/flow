@@ -1,14 +1,14 @@
 // server.js
-var express = require("express");
-var app = express();
-var path = require("path");
-var morgan = require("morgan");
-var mongoose = require("mongoose");
-var bodyParser = require("body-parser");
-var config = require("./config");
-var expressJwt = require("express-jwt");
+const express = require("express");
+const app = express();
+const path = require("path");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const config = require("./config");
+const expressJwt = require("express-jwt");
 
-var port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-mongoose.connect(config.database, function (err) {
+mongoose.connect(config.database, err => {
     if (err) throw err;
     console.log("Successfully connected to the database");
 });
@@ -30,6 +30,6 @@ app.use("/stream", require("./routes/streamRoutes"));
 
 app.use("/auth", require("./routes/authRoutes"));
 
-app.listen(port, function () {
+app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });

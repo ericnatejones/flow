@@ -4,10 +4,10 @@ var User = require("../models/user");
 var jwt = require("jsonwebtoken");
 var config = require("../config");
 
-authRoutes.post("/login", function (req, res) {
+authRoutes.post("/login", (req, res) => {
 
     // Try to find the user with the submitted username
-    User.findOne({username: req.body.username}, function (err, user) {
+    User.findOne({username: req.body.username}, (err, user) => {
         if (err) return res.status(500).send(err);
 
         // If that user isn't in the database:
@@ -34,13 +34,13 @@ authRoutes.post("/login", function (req, res) {
     });
 });
 
-authRoutes.post("/signup", function (req, res) {
-    User.find({username: req.body.username}, function (err, existingUser) {
+authRoutes.post("/signup", (req, res) => {
+    User.find({username: req.body.username}, (err, existingUser) => {
         if (err) return res.status(500).send(err);
         if (existingUser.length) return res.send({success: false, message: "That username is already taken."});
         else {
             var newUser = new User(req.body);
-            newUser.save(function (err, userObj) {
+            newUser.save((err, userObj) => {
                 if (err) return res.status(500).send(err);
                 res.send({user: userObj, message: "Successfully created new user.", success: true});
             });
@@ -48,4 +48,4 @@ authRoutes.post("/signup", function (req, res) {
     })
 });
 
-module.exports = authRoutes;  
+module.exports = authRoutes;

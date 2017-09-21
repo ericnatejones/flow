@@ -4,19 +4,19 @@ var Stream = require("../models/stream");
 var axios = require("axios");
 
 streamRouter.route("/")
-    .get(function (req, res) {
-        Stream.find(req.query, function (err, streams) {
+    .get((req, res) => {
+        Stream.find(req.query, (err, streams) => {
             if (err) res.status(500).send(err);
             res.send(streams);
         });
     })
-    .post(function (req, res) {
+    .post((req, res) => {
         var url = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=';
         var site = req.body.site;
         var param = '&parameterCd=00060';
         console.log(url+site+param)
 
-        axios.get(url+site+param).then(function(response){
+        axios.get(url+site+param).then((response) => {
             console.log(response.data);
 
             if (!req.body.knownTitle){
@@ -32,25 +32,25 @@ streamRouter.route("/")
             }
 
             var stream = new Stream(newStream);
-            stream.save(function (err, newStream) {
+            stream.save((err, newStream) => {
                 if (err) res.status(500).send(err);
                 res.status(201).send(newStream);
             })
 
-        }).catch(function(error){
+        }).catch((error) => {
             console.log(error)
         });
     });
 
 streamRouter.route("/:streamId")
-    .put(function (req, res) {
-        Stream.findByIdAndUpdate(req.params.streamId, req.body, {new: true}, function (err, stream) {
+    .put((req, res) => {
+        Stream.findByIdAndUpdate(req.params.streamId, req.body, {new: true}, (err, stream) => {
             if (err) res.status(500).send(err);
             res.send(stream);
         });
     })
-    .delete(function (req, res) {
-        Stream.findByIdAndRemove(req.params.streamId, function (err, stream) {
+    .delete((req, res) => {
+        Stream.findByIdAndRemove(req.params.streamId, (err, stream) => {
             if (err) res.status(500).send(err);
             res.send(stream);
         })

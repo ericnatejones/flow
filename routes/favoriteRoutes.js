@@ -39,7 +39,7 @@ favoriteRouter.route("/:streamId")
 
     })
 favoriteRouter.route("/")
-    .get(function(req, res){
+    .get((req, res) => {
         User.findOne({_id: req.user._id})
             .populate("favoriteStreams")
             .exec((err, user)=>{
@@ -47,11 +47,10 @@ favoriteRouter.route("/")
                 Stream.populate(user.favoriteStreams, {
                     path: 'stream',
                     model: 'Stream'
-                }, function(err){
+                }, err => {
                     res.send(user.favoriteStreams);
                 })
             })
-
     })
 
 module.exports = favoriteRouter;
