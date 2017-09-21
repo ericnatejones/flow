@@ -1,8 +1,8 @@
-var express = require("express");
-var authRoutes = express.Router();
-var User = require("../models/user");
-var jwt = require("jsonwebtoken");
-var config = require("../config");
+const express = require("express");
+const authRoutes = express.Router();
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const config = require("../config");
 
 authRoutes.post("/login", (req, res) => {
 
@@ -25,7 +25,7 @@ authRoutes.post("/login", (req, res) => {
                 // This secret is like a "password" for your JWT, so when you decode it
                 // you'll pass the same secret used to create the JWT so that it knows
                 // you're allowed to decode it.
-                var token = jwt.sign(user.toObject(), config.secret, {expiresIn: "24h"});
+                let token = jwt.sign(user.toObject(), config.secret, {expiresIn: "24h"});
 
                 // Send the token back to the client app.
                 res.send({token: token, user: user.toObject(), success: true, message: "Here's your token!"})
@@ -39,7 +39,7 @@ authRoutes.post("/signup", (req, res) => {
         if (err) return res.status(500).send(err);
         if (existingUser.length) return res.send({success: false, message: "That username is already taken."});
         else {
-            var newUser = new User(req.body);
+            let newUser = new User(req.body);
             newUser.save((err, userObj) => {
                 if (err) return res.status(500).send(err);
                 res.send({user: userObj, message: "Successfully created new user.", success: true});

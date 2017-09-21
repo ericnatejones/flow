@@ -1,7 +1,7 @@
-var express = require("express");
-var streamRouter = express.Router();
-var Stream = require("../models/stream");
-var axios = require("axios");
+const express = require("express");
+const streamRouter = express.Router();
+const Stream = require("../models/stream");
+const axios = require("axios");
 
 streamRouter.route("/")
     .get((req, res) => {
@@ -11,27 +11,27 @@ streamRouter.route("/")
         });
     })
     .post((req, res) => {
-        var url = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=';
-        var site = req.body.site;
-        var param = '&parameterCd=00060';
+        let url = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=';
+        let site = req.body.site;
+        let param = '&parameterCd=00060';
         console.log(url+site+param)
 
         axios.get(url+site+param).then((response) => {
             console.log(response.data);
 
             if (!req.body.knownTitle){
-                var knownTitle = response.data.value.timeSeries[0].sourceInfo.siteName
+                let knownTitle = response.data.value.timeSeries[0].sourceInfo.siteName
             } else {
-                var knownTitle = req.body.knownTitle
+                let knownTitle = req.body.knownTitle
             }
 
-            var newStream = {
+            let newStream = {
                 apiTitle: response.data.value.timeSeries[0].sourceInfo.siteName,
                 knownTitle: knownTitle,
                 apiId: response.data.value.timeSeries[0].sourceInfo.siteCode[0].value
             }
 
-            var stream = new Stream(newStream);
+            let stream = new Stream(newStream);
             stream.save((err, newStream) => {
                 if (err) res.status(500).send(err);
                 res.status(201).send(newStream);

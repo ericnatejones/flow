@@ -1,9 +1,9 @@
-var express = require("express");
-var favoriteRouter = express.Router();
-var User = require("../models/user");
-var Stream = require("../models/stream")
-var jwt = require("jsonwebtoken");
-var config = require("../config");
+const express = require("express");
+const favoriteRouter = express.Router();
+const User = require("../models/user");
+const Stream = require("../models/stream")
+const jwt = require("jsonwebtoken");
+const config = require("../config");
 
 favoriteRouter.route("/param/:which/:streamId")
     .put(function(req, res){

@@ -1,7 +1,7 @@
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var streamSchema = new Schema({
+const streamSchema = new Schema({
     apiTitle: {
         type: String,
         required: true
