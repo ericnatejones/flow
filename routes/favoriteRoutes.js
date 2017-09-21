@@ -7,28 +7,17 @@ var config = require("../config");
 
 favoriteRouter.route("/param/:which/:streamId")
     .put(function(req, res){
-        console.log(req.user)
-        User.findOne({_id: req.user._id}, function (err, user) {
-          if (err) console.log("err" + err);
-          console.log("favoriteStreams: " + user.favoriteStreams);
-          console.log("++++++++")
-            user.favoriteStreams.forEach(function(stream){
-                console.log("Success, stream" + stream.stream);
-                console.log("Success, stream" + req.params.streamId);
-                if (stream.stream == req.params.streamId){
+        User.findById(req.user._id, (err, user) => {
+            let stream = user.favoriteStreams.id(req.params.streamId);
+            console.log(stream);
+            stream[req.params.which] = req.body.param
+            user.save(function (err, savedUser) {
+                if (err) res.status(500).send(err);
+                console.log("Successfull matched stream id's")
 
-                    stream[req.params.which] = req.body.param;
-
-                    user.save(function (err, savedUser) {
-                        if (err) res.status(500).send(err);
-                        console.log("Successfull matched stream id's")
-
-                        res.status(201).send(savedUser);
-                    });
-                }
-            })
-            // res.send("Stream is not favorited by user")
-        });
+                res.status(201).send(savedUser);
+            });
+        })
     })
 
 favoriteRouter.route("/:streamId")
@@ -51,8 +40,6 @@ favoriteRouter.route("/:streamId")
     })
 favoriteRouter.route("/")
     .get(function(req, res){
-        // console.log(req.user.favoriteStreams)
-        // var favoriteStreams = req.user.filter((stream)=>stream._id === 1)
         User.findOne({_id: req.user._id})
             .populate("favoriteStreams")
             .exec((err, user)=>{
