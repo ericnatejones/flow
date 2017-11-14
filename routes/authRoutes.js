@@ -25,7 +25,7 @@ authRoutes.post("/login", (req, res) => {
                 // This secret is like a "password" for your JWT, so when you decode it
                 // you'll pass the same secret used to create the JWT so that it knows
                 // you're allowed to decode it.
-                let token = jwt.sign(user.toObject(), config.secret, {expiresIn: "24h"});
+                let token = jwt.sign(user.toObject(), config.secret);
 
                 // Send the token back to the client app.
                 res.send({token: token, user: user.toObject(), success: true, message: "Here's your token!"})

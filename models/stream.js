@@ -11,7 +11,7 @@ const streamSchema = new Schema({
         default: this.apiTitle
     },
     apiId: {
-        type: Number,
+        type: String,
         unique: true,
         required: true
     }

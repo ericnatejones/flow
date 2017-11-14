@@ -20,37 +20,39 @@ favoriteRouter.route("/param/:which/:streamId")
         })
     })
 
-favoriteRouter.route("/:streamId")
-    .put(function(req, res){
-        Stream.findById(req.params.streamId, function(err, stream){
-          if (err) console.log(`error:${err}`);
-
-          console.log(req.user.favoriteStreams);
-
-          req.user.favoriteStreams.push({stream: stream});
-
-          console.log(req.user.favoriteStreams)
-          User.findByIdAndUpdate(req.user._id, req.user, {new: true}, function (err, user) {
-            console.log("success")
-              if (err) res.status(500).send(err);
-              res.send(user);
-          });
-        });
-
-    })
 favoriteRouter.route("/")
     .get((req, res) => {
-        User.findOne({_id: req.user._id})
-            .populate("favoriteStreams")
+        User.findById(req.user._id)
+            .populate("favoriteStreams.stream")
             .exec((err, user)=>{
-                if (err) return handleError(err);
-                Stream.populate(user.favoriteStreams, {
-                    path: 'stream',
-                    model: 'Stream'
-                }, err => {
-                    res.send(user.favoriteStreams);
-                })
+                if (err) return res.status(500).send(err);
+                res.send(user);
             })
     })
+    .post((req, res) => {
+      User.findByIdAndUpdate(
+        req.user._id,
+        {$push: {"favoriteStreams": {stream: req.body._id}}},
+        {new: true}
+      )
+          .populate("favoriteStreams.stream")
+          .exec((err, user)=>{
+              if (err) return res.status(500).send(err);
+              res.send(user);
+          })
+    })
+    .delete((req, res) => {
+      User.findByIdAndUpdate(
+        req.user._id,
+        {$pull: {"favoriteStreams": {stream: req.body._id}}},
+        {new: true}
+      )
+          .populate("favoriteStreams.stream")
+          .exec((err, user)=>{
+              if (err) return res.status(500).send(err);
+              res.send(user);
+          })
+    })
+
 
 module.exports = favoriteRouter;
