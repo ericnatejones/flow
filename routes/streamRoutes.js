@@ -17,21 +17,23 @@ streamRouter.route("/")
         console.log(url+site+param)
 
         axios.get(url+site+param).then((response) => {
-            console.log(response.data);
-
+            console.log("the response", response.data);
+            console.log("known title", req.body.knownTitle)
+            let knownTitle;
             if (!req.body.knownTitle){
-                let knownTitle = response.data.value.timeSeries[0].sourceInfo.siteName
+                knownTitle = response.data.value.timeSeries[0].sourceInfo.siteName
             } else {
-                let knownTitle = req.body.knownTitle
+                knownTitle = req.body.knownTitle
             }
 
             let newStream = {
                 apiTitle: response.data.value.timeSeries[0].sourceInfo.siteName,
-                knownTitle: knownTitle,
+                knownTitle,
                 apiId: response.data.value.timeSeries[0].sourceInfo.siteCode[0].value
             }
 
             let stream = new Stream(newStream);
+
             stream.save((err, newStream) => {
                 if (err) res.status(500).send(err);
                 res.status(201).send(newStream);
