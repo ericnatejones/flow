@@ -21,8 +21,7 @@ const userSchema = new Schema({
         {
             stream: {
               type: Schema.Types.ObjectId,
-              ref: "Stream",
-              unique: true
+              ref: "Stream"
             },
             upperParam: {type: Number, default: 100000},
             lowerParam: {type: Number, default: 0}
