@@ -30,16 +30,28 @@ favoriteRouter.route("/")
             })
     })
     .post((req, res) => {
-      User.findByIdAndUpdate(
-        req.user._id,
-        {$push: {"favoriteStreams": {stream: req.body._id}}},
-        {new: true}
+      User.findById(
+        req.user._id
       )
-          .populate("favoriteStreams.stream")
-          .exec((err, user)=>{
-              if (err) return res.status(500).send(err);
-              res.send(user);
-          })
+      .populate("favoriteStreams.stream")
+      .exec((err, user)=>{
+          if (err) return res.status(500).send(err);
+          let found = user.favoriteStreams.some(favorite=>favorite.stream._id.equals(req.body._id))
+          if (found){
+            res.send(user)
+          } else {
+            Stream.findById(req.body._id, (err, stream)=>{
+              console.log(stream)
+              user.favoriteStreams.push({stream, lowerParam: 0, upperParam: 100000})
+              user.save((err, savedUser)=>{
+                if (err) res.status(500).send(err);
+                res.send(user);
+              })
+
+            })
+          }
+
+      })
     })
     .delete((req, res) => {
       User.findByIdAndUpdate(
