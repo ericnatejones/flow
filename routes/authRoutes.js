@@ -3,6 +3,7 @@ const authRoutes = express.Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
+const bcrypt = require("bcrypt")
 
 authRoutes.post("/login", (req, res) => {
 
@@ -15,21 +16,36 @@ authRoutes.post("/login", (req, res) => {
             return res.status(401).send({success: false, message: "User with the provided username was not found"})
         } else if (user) {
 
-            // Check if the submitted password is the same as the one saved in the database
-            if (user.password !== req.body.password) {
-               return res.status(401).send({success: false, message: "Incorrect password"})
+          bcrypt.compare(req.body.password, user.password, function(err, response) {
+            if(response){
+              let token = jwt.sign(user.toObject(), config.secret);
+              // Send the token back to the client app.
+              res.send({token: token, user: user.toObject(), success: true, message: "Here's your token!"})
             } else {
+              return res.status(401).send({success: false, message: "Incorrect password"})
+              }
+          });
 
-                // If username and password both match an entry in the database,
-                // create a JWT! Add the user object as the payload and pass in the secret.
-                // This secret is like a "password" for your JWT, so when you decode it
-                // you'll pass the same secret used to create the JWT so that it knows
-                // you're allowed to decode it.
-                let token = jwt.sign(user.toObject(), config.secret);
 
-                // Send the token back to the client app.
-                res.send({token: token, user: user.toObject(), success: true, message: "Here's your token!"})
-            }
+
+
+
+
+            // Check if the submitted password is the same as the one saved in the database
+            // if (user.password !== req.body.password) {
+            //    return res.status(401).send({success: false, message: "Incorrect password"})
+            // } else {
+            //
+            //     // If username and password both match an entry in the database,
+            //     // create a JWT! Add the user object as the payload and pass in the secret.
+            //     // This secret is like a "password" for your JWT, so when you decode it
+            //     // you'll pass the same secret used to create the JWT so that it knows
+            //     // you're allowed to decode it.
+            //     let token = jwt.sign(user.toObject(), config.secret);
+            //
+            //     // Send the token back to the client app.
+            //     res.send({token: token, user: user.toObject(), success: true, message: "Here's your token!"})
+            // }
         }
     });
 });
@@ -40,10 +56,13 @@ authRoutes.post("/signup", (req, res) => {
         if (existingUser.length) return res.send({success: false, message: "That username is already taken."});
         else {
             let newUser = new User(req.body);
-            newUser.save((err, userObj) => {
-                if (err) return res.status(500).send(err);
-                res.send({user: userObj, message: "Successfully created new user.", success: true});
-            });
+            bcrypt.hash(newUser.password, 3, function(err, hash){
+              newUser.password = hash;
+              newUser.save((err, userObj) => {
+                  if (err) return res.status(500).send(err);
+                  res.send({user: userObj, message: "Successfully created new user.", success: true});
+              });
+            })
         }
     })
 });
