@@ -18,7 +18,7 @@ authRoutes.post("/login", (req, res) => {
 
           bcrypt.compare(req.body.password, user.password, function(err, isResolved) {
             if(isResolved){
-              let token = jwt.sign(user.toObject(), config.secret);
+              let token = jwt.sign(user.toObject(), process.env.SECRET || config.secret);
               // Send the token back to the client app.
               return res.send({token: token, user: user.toObject(), success: true, message: "Here's your token!"})
             } else {

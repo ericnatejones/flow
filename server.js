@@ -24,7 +24,7 @@ mongoose.connect(config.database, err => {
     console.log("Successfully connected to the database");
 });
 
-app.use("/api", expressJwt({secret: config.secret}));
+app.use("/api", expressJwt({secret: process.env.SECRET || config.secret}));
 
 app.use("/api/favorite", require("./routes/favoriteRoutes"));
 
