@@ -12,21 +12,24 @@ favoriteRouter.route("/param/:which/:streamId")
             console.log(stream);
             stream[req.params.which] = req.body.param
             user.save(function (err, savedUser) {
-                if (err) res.status(500).send(err);
+                if (err) return res.status(500).send(err);
                 console.log("Successfull matched stream id's")
 
-                res.status(201).send(savedUser);
+                return res.status(201).send(savedUser);
             });
         })
     })
 
 favoriteRouter.route("/")
     .get((req, res) => {
+
         User.findById(req.user._id)
             .populate("favoriteStreams.stream")
             .exec((err, user)=>{
+                console.log("user", user)
+
                 if (err) return res.status(500).send(err);
-                res.send(user);
+                return res.send(user);
             })
     })
     .post((req, res) => {
@@ -38,14 +41,14 @@ favoriteRouter.route("/")
           if (err) return res.status(500).send(err);
           let found = user.favoriteStreams.some(favorite=>favorite.stream._id.equals(req.body._id))
           if (found){
-            res.send(user)
+            return res.status(400).send({"msg": "River Already Added"})
           } else {
             Stream.findById(req.body._id, (err, stream)=>{
               console.log(stream)
               user.favoriteStreams.push({stream, lowerParam: 0, upperParam: 100000})
               user.save((err, savedUser)=>{
-                if (err) res.status(500).send(err);
-                res.send(user);
+                if (err) return res.status(500).send(err);
+                return res.send(user);
               })
 
             })
@@ -62,7 +65,7 @@ favoriteRouter.route("/")
           .populate("favoriteStreams.stream")
           .exec((err, user)=>{
               if (err) return res.status(500).send(err);
-              res.send(user);
+              return res.send(user);
           })
     })
 
