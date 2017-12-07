@@ -6,8 +6,8 @@
  const morgan = require("morgan");
  const mongoose = require("mongoose");
  const bodyParser = require("body-parser");
- const config = require("./config");
- const expressJwt = require("express-jwt");		
+ // const config = require("./config");
+ const expressJwt = require("express-jwt");
 
  const port = process.env.PORT || 5000;
 
