@@ -1,6 +1,6 @@
 import axios from "axios"
-import { baseURL } from "../../config"
-
+// import { baseURL } from "../../config"
+ const baseURL = "" 
 //AUTHORIZATION
 const axiosAuthInstance = axios.create({
     baseURL
